@@ -71,8 +71,15 @@ export default function DemoDashboard() {
     setCopied('');
   }
 
+  function employeeReviewPath(employee) {
+    if (process.env.NEXT_PUBLIC_BASE_PATH) {
+      return `/review/john-sample-company?employee=${encodeURIComponent(employee.token)}`;
+    }
+    return `/review/${employee.token}`;
+  }
+
   async function copyLink(employee) {
-    const url = `${window.location.origin}/review/${employee.token}`;
+    const url = `${window.location.origin}${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}${employeeReviewPath(employee)}`;
     await navigator.clipboard.writeText(url);
     setCopied(employee.token);
   }
@@ -120,7 +127,7 @@ export default function DemoDashboard() {
                     <span className="employee-initial" aria-hidden="true">{employee.name.charAt(0).toUpperCase()}</span>
                     <div className="employee-details"><strong>{employee.name}</strong><span>{count} {count === 1 ? 'review' : 'reviews'} · Active</span></div>
                     <div className="employee-actions">
-                      <Link className="small-button" href={`/review/${employee.token}`}>Open review page</Link>
+                      <Link className="small-button" href={employeeReviewPath(employee)}>Open review page</Link>
                       <button className="small-button ghost-button" type="button" onClick={() => copyLink(employee)}>{copied === employee.token ? 'Copied' : 'Copy link'}</button>
                     </div>
                   </article>
